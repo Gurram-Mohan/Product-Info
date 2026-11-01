@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NutriScan – Analyse the nutritional content of your favourite food products. Get detailed macronutrient and micronutrient breakdowns for Instant Noodles, Potato Chips, Biscuits, Roasted Makhana, and Ice-cream. B.Tech Food Technology educational project.">
+  <meta name="keywords" content="nutrition, food analysis, macronutrients, micronutrients, NutriScan, food technology, calories, vitamins, minerals">
+  <meta name="author" content="NutriScan – B.Tech Food Technology Project">
+  <meta property="og:title" content="NutriScan – Food Nutrition Analyzer">
+  <meta property="og:description" content="Detailed nutrition analysis for 5 popular food products. Enter the weight and see every nutrient calculated accurately.">
+  <title>NutriScan – Food Nutrition Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
+</head>
+<body>
+
+  <!-- ─── Navbar ────────────────────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-inner">
+      <a href="#home" class="navbar-brand" aria-label="NutriScan Home">
+        <div class="navbar-logo" aria-hidden="true">🥗</div>
+        <div>
+          <div class="navbar-title">NutriScan</div>
+        </div>
+        <span class="navbar-tagline">Food Nutrition Analyzer</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="#home"     aria-label="Home section">Home</a></li>
+        <li><a href="#products" aria-label="Products section">Products</a></li>
+        <li><a href="#results"  aria-label="Results section">Results</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ─── Hero / Search ─────────────────────────────────────────────────────── -->
+  <section id="home" aria-label="Hero and search section">
+    <div class="hero-inner">
+
+      <!-- Left: Text + Search -->
+      <div class="hero-text">
+        <div class="hero-badge" aria-label="Educational project badge">
+          <span>🎓</span> B.Tech Food Technology Project
+        </div>
+        <h1 class="hero-title">
+          Know What's in<br>
+          <span>Your Food</span>
+        </h1>
+        <p class="hero-subtitle">
+          Search for a food product, enter the weight, and get a complete breakdown of
+          macronutrients, vitamins, and minerals — instantly calculated for your serving size.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="search-wrapper" role="search">
+          <div class="search-bar-container">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search: Instant Noodles, Potato Chips…"
+              autocomplete="off"
+              aria-label="Search for a food product"
+              aria-autocomplete="list"
+              aria-controls="autocompleteList"
+            >
+            <button class="search-btn" id="searchBtn" aria-label="Search for food product">
+              Analyse
+            </button>
+          </div>
+          <!-- Autocomplete -->
+          <div id="autocompleteList" class="autocomplete-dropdown" role="listbox" aria-label="Autocomplete suggestions"></div>
+          <!-- Search Error -->
+          <div id="searchError" class="search-error" role="alert" aria-live="polite"></div>
+        </div>
+
+        <div style="margin-top:1.25rem;">
+          <button onclick="scrollToProducts()" style="background:none;border:none;color:var(--green-600);font-size:0.875rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;padding:0;" aria-label="Browse all products">
+            ↓ Browse all products
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Hero Image -->
+      <div class="hero-image-wrap" aria-hidden="true">
+        <img src="images/food_hero.jpg" alt="Assorted food products including noodles, chips, biscuits, makhana and ice cream" loading="eager">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Products Grid ─────────────────────────────────────────────────────── -->
+  <section id="products" aria-label="Supported food products">
+    <div class="section-header">
+      <div class="section-label">Supported Products</div>
+      <h2 class="section-title">Choose a Food to Analyse</h2>
+      <p class="section-subtitle">Click any product card to load its complete nutritional profile</p>
+    </div>
+    <div class="products-grid" id="productsGrid" role="list" aria-label="Food product cards"></div>
+  </section>
+
+  <!-- ─── Results Dashboard ─────────────────────────────────────────────────── -->
+  <section id="results" aria-label="Nutrition analysis results" aria-live="polite">
+    <div class="results-inner">
+
+      <!-- Product Header -->
+      <div class="product-header" id="productHeader" role="region" aria-label="Product information">
+        <img class="product-header-img" id="productHeaderImg" src="" alt="" loading="lazy">
+        <div class="product-header-info">
+          <div class="product-header-category" id="productHeaderCategory"></div>
+          <h2 class="product-header-name" id="productHeaderName"></h2>
+          <p class="product-header-desc" id="productHeaderDesc"></p>
+          <div class="product-note" id="productNote" role="note"></div>
+        </div>
+        <button class="btn-reset" id="resetBtn" onclick="resetAnalysis()" aria-label="Reset analysis and return to home">
+          ↩ Reset
+        </button>
+      </div>
+
+      <!-- Quantity Panel -->
+      <div class="quantity-panel" role="region" aria-label="Quantity selection">
+        <div class="quantity-panel-title">
+          <span aria-hidden="true">⚖️</span> Select Quantity
+        </div>
+        <div class="quantity-controls">
+          <div id="qtyBtns" style="display:flex;gap:0.5rem;flex-wrap:wrap;" role="group" aria-label="Preset quantity buttons"></div>
+
+          <div class="qty-custom-wrap" aria-label="Custom quantity input">
+            <input
+              type="number"
+              id="customQtyInput"
+              min="1" max="10000"
+              placeholder="100"
+              aria-label="Enter custom quantity in grams"
+            >
+            <span class="qty-unit-label">g</span>
+          </div>
+
+          <div class="qty-selected-display" id="qtySelectedDisplay" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Energy Banner -->
+      <div class="energy-banner" role="region" aria-label="Energy summary">
+        <div class="energy-banner-left">
+          <div class="energy-icon" aria-hidden="true">⚡</div>
+          <div>
+            <div class="energy-label">Total Energy</div>
+            <div>
+              <span class="energy-value" id="energyValue">—</span>
+              <span class="energy-unit"> kcal</span>
+            </div>
+            <div class="energy-dri" id="energyDriPct"></div>
+          </div>
+        </div>
+        <div class="calorie-dist" role="group" aria-label="Calorie distribution by macronutrient">
+          <div class="cal-dist-item">
+            <div class="cal-dist-pct" id="carbPct" style="color:#fb923c">—</div>
+            <div class="cal-dist-label">from Carbs<br><small style="opacity:0.7">4 kcal/g</small></div>
+          </div>
+          <div class="cal-dist-item">
+            <div class="cal-dist-pct" id="protPct" style="color:#93c5fd">—</div>
+            <div class="cal-dist-label">from Protein<br><small style="opacity:0.7">4 kcal/g</small></div>
+          </div>
+          <div class="cal-dist-item">
+            <div class="cal-dist-pct" id="fatPct" style="color:#fde047">—</div>
+            <div class="cal-dist-label">from Fat<br><small style="opacity:0.7">9 kcal/g</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Macro Cards -->
+      <div role="region" aria-label="Macronutrient breakdown">
+        <h3 style="font-family:var(--font-heading);font-size:1.05rem;font-weight:700;color:var(--gray-700);margin-bottom:1rem;padding-left:0.25rem;">
+          🌾 Macronutrients
+        </h3>
+        <div class="cards-grid" id="macroCards" role="list" aria-label="Macronutrient cards"></div>
+      </div>
+
+      <!-- Calorie Distribution Chart -->
+      <div class="chart-section" role="region" aria-label="Calorie distribution chart">
+        <div class="chart-section-title">
+          <span aria-hidden="true">📊</span> Calorie Distribution from Macronutrients
+        </div>
+        <p style="font-size:0.8rem;color:var(--gray-500);margin-bottom:1.25rem;">
+          Calculated using: Carbohydrates = 4 kcal/g · Protein = 4 kcal/g · Fat = 9 kcal/g (Atwater factors)
+        </p>
+        <div class="chart-container">
+          <div class="donut-wrap">
+            <div id="macroDonutChart" aria-hidden="true"></div>
+            <div class="donut-center">
+              <div class="donut-center-val" id="donutCenterVal">—</div>
+              <div class="donut-center-lbl">kcal</div>
+            </div>
+          </div>
+          <div class="chart-legend" id="chartLegend" role="list" aria-label="Chart legend"></div>
+        </div>
+      </div>
+
+      <!-- Vitamins Section -->
+      <div class="micro-section" role="region" aria-label="Vitamin content">
+        <div class="micro-section-title">
+          <span aria-hidden="true">🍊</span> Vitamins
+          <small style="font-size:0.72rem;font-weight:400;color:var(--gray-500);margin-left:0.5rem;">
+            % of ICMR-NIN RDA 2020 (adult reference)
+          </small>
+        </div>
+        <div class="micro-grid" id="vitaminsGrid" role="list" aria-label="Vitamin cards"></div>
+      </div>
+
+      <!-- Minerals Section -->
+      <div class="micro-section" role="region" aria-label="Mineral content">
+        <div class="micro-section-title">
+          <span aria-hidden="true">💎</span> Minerals
+          <small style="font-size:0.72rem;font-weight:400;color:var(--gray-500);margin-left:0.5rem;">
+            % of ICMR-NIN RDA 2020 (adult reference)
+          </small>
+        </div>
+        <div class="micro-grid" id="mineralsGrid" role="list" aria-label="Mineral cards"></div>
+      </div>
+
+      <!-- Nutrition Table -->
+      <div class="table-section" role="region" aria-label="Complete nutrition table">
+        <div class="table-section-title">
+          <span aria-hidden="true">📋</span> Complete Nutrition Facts Table
+        </div>
+        <p style="font-size:0.78rem;color:var(--gray-500);margin-bottom:1rem;">
+          All values calculated using: <strong>Nutrient quantity = (Value per 100 g × Selected grams) / 100</strong>.
+          "Data unavailable" means a reliable value is not present in the source database — it does not mean zero.
+        </p>
+        <table class="nutrition-table" id="nutritionTable" aria-label="Nutrition facts table">
+          <!-- Rendered by JS -->
+        </table>
+      </div>
+
+      <!-- Data Source Info -->
+      <div class="source-panel" role="note" aria-label="Data sources">
+        <strong>📚 Data Sources &amp; Limitations:</strong><br>
+        Nutritional data is sourced from the <strong>USDA FoodData Central</strong> (usda.gov) and the
+        <strong>ICMR-NIN Indian Food Composition Tables 2017</strong>. Daily reference values are based on
+        <strong>FSSAI Nutrition Labelling Regulations 2020</strong> and <strong>Codex Alimentarius</strong>
+        reference values, cross-referenced with <strong>ICMR-NIN RDA 2020</strong> for micronutrients.
+        Values are representative estimates for generic food types and may differ from specific brand products.
+        "Data unavailable" indicates that a reliable published value was not found in these sources for that nutrient;
+        it is not equivalent to zero.
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer" role="note" aria-label="Educational disclaimer">
+        <div class="disclaimer-icon" aria-hidden="true">⚠️</div>
+        <div>
+          <strong>Educational Disclaimer:</strong> NutriScan is an educational food nutrition analysis project.
+          Nutritional values may vary by brand, recipe, processing method, and preparation. Values shown are based
+          on the stated food composition references and are not laboratory measurements. Always check the product
+          label for brand-specific nutritional information.
+        </div>
+      </div>
+
+      <!-- Reset Button -->
+      <div style="text-align:center;margin-top:2rem;">
+        <button onclick="resetAnalysis()" id="resetBtn2"
+          style="background:linear-gradient(135deg,var(--green-500),var(--green-600));color:white;border:none;
+                 padding:0.85rem 2.5rem;border-radius:var(--radius-xl);font-size:1rem;font-weight:700;
+                 box-shadow:0 4px 16px rgba(34,197,94,0.35);transition:var(--transition);cursor:pointer;"
+          aria-label="Analyse another product">
+          🔄 Analyse Another Product
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Footer ────────────────────────────────────────────────────────────── -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">🥗 NutriScan</div>
+      <div class="footer-tagline">Food Nutrition Analyzer – B.Tech Food Technology Educational Project</div>
+      <div class="footer-refs">
+        <strong>References:</strong><br>
+        1. USDA FoodData Central – <em>fdc.nal.usda.gov</em><br>
+        2. ICMR-NIN Indian Food Composition Tables 2017 – National Institute of Nutrition, Hyderabad<br>
+        3. ICMR-NIN Recommended Dietary Allowances (RDA) and Estimated Average Requirements (EAR) 2020<br>
+        4. FSSAI Food Safety and Standards (Labelling and Display) Regulations 2020<br>
+        5. Codex Alimentarius Commission – Guidelines on Nutrition Labelling (CAC/GL 2-1985, amended 2021)
+      </div>
+      <div class="footer-copyright">
+        &copy; 2026 NutriScan. Created for educational purposes. Not a substitute for professional dietary advice.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── Scripts ────────────────────────────────────────────────────────────── -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
